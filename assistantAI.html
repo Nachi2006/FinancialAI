@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Assistant AI</title>
+    <!-- Link to Satoshi Font -->
+    <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Satoshi', sans-serif; /* Use Satoshi font */
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #007BFF; /* Primary blue color */
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-size: 1.2em;
+        }
+
+        .container {
+            max-width: 800px; /* Centered container */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white; /* White background for content */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .container h2 {
+            text-align: center;
+            color: #007BFF; /* Primary blue color */
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 1.1em;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+
+        textarea {
+            resize: none; /* Prevent resizing */
+        }
+
+        button {
+            background-color: #007BFF; /* Button blue color */
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9; /* Light gray background for output */
+            border-left: 5px solid #007BFF; /* Blue accent border */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Financial Assistant AI</h1>
+        <p>Your personal financial guide at your fingertips</p>
+    </header>
+
+    <div class="container">
+        <h2>Ask Your Financial Query</h2>
+        
+        <!-- Input Form -->
+        <form id="financialQueryForm">
+            <label for="query">Enter your financial query:</label>
+            <textarea id="query" rows="5" placeholder="E.g., What are the best investment options for long-term goals?" required></textarea>
+
+            <button type="button" onclick="getFinancialAdvice()">Submit Query</button>
+        </form>
+
+        <!-- Output Section -->
+        <div id="adviceOutput" class="output" style="display:none;">
+          <!-- Advice will be displayed here -->
+          <strong>Advice:</strong>
+          <p id="adviceText"></p>
+        </div>
+    </div>
+
+    <script>
+      async function getFinancialAdvice() {
+          const query = document.getElementById("query").value;
+
+          // Display loading message
+          const adviceOutput = document.getElementById("adviceOutput");
+          const adviceText = document.getElementById("adviceText");
+          adviceOutput.style.display = "block";
+          adviceText.innerHTML = "Fetching advice... Please wait.";
+
+          try {
+              // Replace with your backend API endpoint
+              const response = await fetch("http://127.0.0.1:5000/get_expert_advice", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ user_query: query })
+              });
+
+              if (!response.ok) throw new Error("Failed to fetch advice");
+
+              const data = await response.json();
+              if (data.error) {
+                  adviceText.innerHTML = `<strong>Error:</strong> ${data.error}`;
+              } else {
+                  adviceText.innerHTML = data.advice.replace(/\n/g, "<br>"); // Format line breaks
+              }
+          } catch (error) {
+              console.error("Error fetching financial advice:", error);
+              adviceText.innerHTML = "An error occurred while fetching advice.";
+          }
+      }
+    </script>
+</body>
+</html>
